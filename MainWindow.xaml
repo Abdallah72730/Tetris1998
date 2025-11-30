@@ -5,8 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tetris1998"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Tetris" Height="550" Width="700">
+    <Grid Margin="10,10,10,14">
+        <Canvas x:Name="Canvas" Margin="0,10,0,0" Height="480" Width="240" Background="Black"/>
+        <TextBlock x:Name="ScoreText"
+           Text="Score: 0"
+           FontFamily="Consolas"
+           FontSize="24"
+           FontWeight="Bold"
+           Foreground="White"
+           HorizontalAlignment="Center"
+           Margin="0,20,0,10"/>
 
     </Grid>
 </Window>

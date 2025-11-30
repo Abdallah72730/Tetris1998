@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
-using System.Windows.Controls.Primitives;
 
 namespace Tetris1998
 {
     public class GameManager
     {
-        private GameGrid GameGrid;
-        private Tetromino CurrentBlock;
+        public GameGrid GameGrid;
+        public Tetromino CurrentBlock;
         private Random RandomInteger;
 
 
@@ -28,8 +26,7 @@ namespace Tetris1998
             isPaused = false;
             score = 0;
             timeSinceLastFall = 0;
-            fallSpeed = 1;
-            new TetrisBlock();
+            fallSpeed = 0.25;
         }
 
         public void StartGame() 
@@ -40,7 +37,7 @@ namespace Tetris1998
             score = 0;
             SpawnNewBlock();
 
-
+            new TetrisBlock();
         }
 
         public void SpawnNewBlock() 
@@ -71,12 +68,10 @@ namespace Tetris1998
         {
             if (CurrentBlock == null) return;
 
-            CurrentBlock.MoveLeft();
 
-            if (!GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn()-1)) 
+            if (GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn()-1)) 
             {
-                CurrentBlock.MoveRight();
-                LockBlock();
+                CurrentBlock.MoveLeft();
             }
         }
 
@@ -84,11 +79,10 @@ namespace Tetris1998
         {
             if (CurrentBlock == null) return;
 
-            CurrentBlock.MoveRight();
-            if (!GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn() + 1)) 
+            
+            if (GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn() + 1)) 
             {
-                CurrentBlock.MoveLeft();
-                LockBlock();
+                CurrentBlock.MoveRight();
             }
         }
 
@@ -96,12 +90,19 @@ namespace Tetris1998
         {
             if (CurrentBlock == null) return;
 
-            CurrentBlock.MoveDown();
 
-            if (!GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow() + 1, CurrentBlock.getCurrentColumn())) 
+
+            if (GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow() + 1, CurrentBlock.getCurrentColumn()))
             {
-                CurrentBlock.MoveUp();
+                CurrentBlock.MoveDown();
+            }
+            else 
+            {
                 LockBlock();
+                GameGrid.clearCompletedRow();
+                score += GameGrid.completedRows;
+                GameGrid.completedRows = 0;
+                SpawnNewBlock();
             }
         }
 
@@ -110,20 +111,21 @@ namespace Tetris1998
             GameGrid.PlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn());
         }
 
-        public void  Update(double deltaTime) 
+        public void Update(double deltaTime)
         {
-            if (isGameOver || isPaused) return;
+            if (isGameOver || isPaused) 
+            {
+                return;
+            }
 
             timeSinceLastFall += deltaTime;
 
-            if(timeSinceLastFall >= fallSpeed) 
+            if (timeSinceLastFall >= fallSpeed) 
             {
                 MoveBlockDown();
                 timeSinceLastFall = 0;
             }
         }
-
-
         
     }
 }
