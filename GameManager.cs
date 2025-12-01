@@ -10,6 +10,8 @@ namespace Tetris1998
         public Tetromino CurrentBlock;
         private Random RandomInteger;
 
+        public Tetromino NextBlock;
+
 
         public bool isGameOver;
         public bool isPaused;
@@ -39,25 +41,36 @@ namespace Tetris1998
 
             new TetrisBlock();
         }
-
-        public void SpawnNewBlock() 
+        private Tetromino GenerateRandomBlock() 
         {
             int blockIndex = RandomInteger.Next(0, TetrisBlock.AllBlocks.Length);
             int[,] block = TetrisBlock.AllBlocks[blockIndex];
+
+            return new Tetromino(block, 0, 0, blockIndex+1);
+        }
+
+        public void SpawnNewBlock() 
+        {
 
             int StartRow = 0;
             int StartCol = GameGrid.Columns / 2 - 1;
 
             if (CurrentBlock == null)
             {
-                CurrentBlock = new Tetromino(block, StartRow, StartCol, blockIndex + 1);
+                CurrentBlock = GenerateRandomBlock();
+                CurrentBlock.Reset(CurrentBlock.getCurrentBlock(), StartRow, StartCol, CurrentBlock.getBlockID());
+
+                NextBlock = GenerateRandomBlock();
             }
             else 
             {
-                CurrentBlock.Reset(block, StartRow, StartCol, blockIndex+1);
+                CurrentBlock = NextBlock;
+                CurrentBlock.Reset(CurrentBlock.getCurrentBlock(), StartRow, StartCol, CurrentBlock.getBlockID());
+
+                NextBlock = GenerateRandomBlock();
             }
 
-            if (!GameGrid.CanPlaceBlock(block, StartRow, StartCol)) 
+            if (!GameGrid.CanPlaceBlock(CurrentBlock.getCurrentBlock(), CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn())) 
             {             
                 isGameOver = true;
 
@@ -100,10 +113,22 @@ namespace Tetris1998
             {
                 LockBlock();
                 GameGrid.clearCompletedRow();
-                score += GameGrid.completedRows;
+                score += GameGrid.completedRows * 100;
                 GameGrid.completedRows = 0;
                 SpawnNewBlock();
             }
+        }
+
+        public void RotateBlock() 
+        {
+            if (CurrentBlock == null|| isGameOver|| isPaused) return;
+
+            int[,] rotatedBlock = RotationHelper.RotateClockwise(CurrentBlock.getCurrentBlock());
+
+            if (GameGrid.CanPlaceBlock(rotatedBlock, CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn())) 
+            {
+                CurrentBlock.Reset(rotatedBlock, CurrentBlock.getCurrentRow(), CurrentBlock.getCurrentColumn(), CurrentBlock.getBlockID());
+            } ;
         }
 
         public void LockBlock() 

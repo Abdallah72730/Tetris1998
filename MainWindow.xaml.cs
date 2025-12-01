@@ -56,6 +56,7 @@ namespace Tetris1998
                 case Key.Left: gameManager.MoveBlockLeft(); break;
                 case Key.Right: gameManager.MoveBlockRight(); break;
                 case Key.Down: gameManager.MoveBlockDown(); break;
+                case Key.Up: gameManager.RotateBlock(); break;
                 default: break;
             }
             DrawGame();
@@ -66,16 +67,36 @@ namespace Tetris1998
         {
             double deltaTime = 0.016;
             gameManager.Update(deltaTime);
+            if (gameManager.isGameOver) 
+            {
+                GameOverOverlay.Visibility = Visibility.Visible;
+                gameTimer.Stop();
+                return;
+            }
             UpdateScoreDisplay();
             DrawGame(); 
         }
 
+        private void RestartButton_Click(object sender, RoutedEventArgs e)
+        {
+            gameManager = new GameManager(20, 10);
+            gameManager.StartGame();
+            GameOverOverlay.Visibility = Visibility.Collapsed;
+            gameTimer.Start();
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e) 
+        {
+            this.Close();
+        }
+
         public void DrawGame() 
         {
-            Canvas.Children.Clear();
+            GameCanvas.Children.Clear();
             DrawGridlines();
             DrawGrid();
             DrawCurrentBlock();
+            DrawPreviewCanvas();
         }
 
         public void DrawGrid() 
@@ -95,7 +116,7 @@ namespace Tetris1998
                         Canvas.SetLeft(cell, cols*CellSize);
                         Canvas.SetTop(cell, rows*CellSize);
 
-                        Canvas.Children.Add(cell);
+                        GameCanvas.Children.Add(cell);
                     }
                 }
             }
@@ -126,10 +147,50 @@ namespace Tetris1998
                         Canvas.SetLeft(CurrentBlockCell, x);
                         Canvas.SetTop(CurrentBlockCell, y);
 
-                        Canvas.Children.Add(CurrentBlockCell);
+                        GameCanvas.Children.Add(CurrentBlockCell);
                     }
                 }
             }
+        }
+
+        public void DrawPreviewCanvas() 
+        {
+            PreviewCanvas.Children.Clear();
+
+            int[,] NextBlock = gameManager.NextBlock.getCurrentBlock();
+            int BlockID = gameManager.NextBlock.getBlockID();
+
+            int NextBlockWidth = NextBlock.GetLength(0)*CellSize;
+            int NextBlockHeight = NextBlock.GetLength(1)*CellSize;
+
+            int offSetX = (int)((PreviewCanvas.Width - NextBlockHeight) / 2);
+            int offSetY = (int)(PreviewCanvas.Height - NextBlockWidth) / 2;
+
+            for (int r = 0; r < NextBlock.GetLength(0); r++) 
+            {
+                for (int c =0; c < NextBlock.GetLength(1); c++) 
+                {
+                    if (NextBlock[r, c] != 0) 
+                    {
+                        Rectangle cell = new Rectangle();
+                        cell.Width = CellSize;
+                        cell.Height = CellSize;
+                        cell.Fill = BlockColors[BlockID];
+
+                        Canvas.SetLeft(cell, offSetX +c * CellSize);
+                        Canvas.SetTop(cell, offSetY + r * CellSize);
+
+                        PreviewCanvas.Children.Add(cell);
+
+
+                    }
+                }
+            }
+
+            if (gameManager.NextBlock == null) return;
+
+
+            
         }
 
         public void DrawGridlines() 
@@ -145,7 +206,7 @@ namespace Tetris1998
                 HLine.Stroke = Brushes.Gray;
                 HLine.StrokeThickness = 1;
 
-                Canvas.Children.Add(HLine);
+                GameCanvas.Children.Add(HLine);
             }
 
             for (int c = 0; c < gameManager.GameGrid.Columns; c++) 
@@ -159,7 +220,7 @@ namespace Tetris1998
 
                 VLine.Stroke = Brushes.Gray;
                 VLine.StrokeThickness = 1;
-                Canvas.Children.Add(VLine);
+                GameCanvas.Children.Add(VLine);
 
             }
         }

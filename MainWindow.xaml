@@ -7,15 +7,47 @@
         mc:Ignorable="d"
         Title="Tetris" Height="550" Width="700">
     <Grid Margin="10,10,10,14">
-        <Canvas x:Name="Canvas" Margin="0,10,0,0" Height="480" Width="240" Background="Black"/>
+        <Canvas x:Name="GameCanvas" Margin="201,20,239,10" Height="480" Width="240" Background="Black"/>
+        <Canvas x:Name="PreviewCanvas" Height="120" Width="120" Background="DarkGray" Margin="523,20,37,370"/>
         <TextBlock x:Name="ScoreText"
            Text="Score: 0"
-           FontFamily="Consolas"
+           FontFamily="Courier New"
            FontSize="24"
            FontWeight="Bold"
-           Foreground="White"
-           HorizontalAlignment="Center"
-           Margin="0,20,0,10"/>
+           Foreground="DarkOrange"
+           HorizontalAlignment="Left"
+           Margin="30,230,0,230"/>
+        <StackPanel Margin="475,210,0,81" >
+            <Button  x:Name="RestartButton" Height="30" Width =" 100" Content="Restart" Foreground="Yellow" Background="Purple" Click="RestartButton_Click" Margin="0,0,0,50"/>
+            <Button x:Name="ExitButton" Height="30" Width="100" Content="Exit" Foreground="Blue" Background="Cyan" Click="ExitButton_Click"/>
+        </StackPanel>
+        <Grid x:Name="GameOverOverlay" Visibility="Collapsed"
+          Background="#AA000000" Margin="-12,0,-14,-13">
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="GAME OVER"
+                       FontSize="48"
+                       Foreground="Red"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Margin="0 0 0 20"/>
+
+                <Button Content="Restart"
+                    Width="120"
+                    Height="40"
+                    Background="Purple"
+                    Foreground="Yellow"
+                    Margin="0,0,0,10"
+                    Click="RestartButton_Click"/>
+                <Button Content="Exit"
+                        Width="120"
+                        Height="40"
+                        Background="Cyan"
+                        Foreground="Blue"
+                        Click="ExitButton_Click"/>
+            </StackPanel>
+
+        </Grid>
 
     </Grid>
 </Window>
