@@ -19,6 +19,7 @@
            Margin="30,230,0,230"/>
         <StackPanel Margin="475,210,0,81" >
             <Button  x:Name="RestartButton" Height="30" Width =" 100" Content="Restart" Foreground="Yellow" Background="Purple" Click="RestartButton_Click" Margin="0,0,0,50"/>
+            <Button x:Name="PauseButton" Height="30" Width="100" Content="Pause" Foreground="DarkGreen" Background="DeepPink" Margin="0,0,0,50" Click="PauseButton_Click" />
             <Button x:Name="ExitButton" Height="30" Width="100" Content="Exit" Foreground="Blue" Background="Cyan" Click="ExitButton_Click"/>
         </StackPanel>
         <Grid x:Name="GameOverOverlay" Visibility="Collapsed"

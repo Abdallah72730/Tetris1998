@@ -28,7 +28,7 @@ namespace Tetris1998
             isPaused = false;
             score = 0;
             timeSinceLastFall = 0;
-            fallSpeed = 0.25;
+            fallSpeed = 0.15;
         }
 
         public void StartGame() 

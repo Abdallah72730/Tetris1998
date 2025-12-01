@@ -99,6 +99,33 @@ namespace Tetris1998
             DrawPreviewCanvas();
         }
 
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            TogglePause();
+        }
+
+        // Pause/Resume toggle method
+        private void TogglePause()
+        {
+            // toggle the isPaused flag and update timer and button content accordingly
+            if (!gameManager.isPaused)
+            {
+                // pause the game
+                gameTimer.Stop();
+                // set the flag
+                gameManager.isPaused = true;
+                // update button content
+                PauseButton.Content = "Resume";
+            }
+            // vise versa
+            else
+            {
+                gameTimer.Start();
+                gameManager.isPaused = false;
+                PauseButton.Content = "Pause";
+            }
+        }
+
         public void DrawGrid() 
         {
             for (int rows = 0; rows < gameManager.GameGrid.Rows; rows++) 
